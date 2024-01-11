@@ -23,6 +23,7 @@ Run the following commands to install the required dependencies:
 composer install
 npm install
 
+
 Database Configuration
 Make a copy of .env.example and rename it to .env. Update the following sections in the .env file with your database configuration:
 
@@ -36,7 +37,7 @@ DB_PASSWORD=
 Database Migration
 Run the migration command to set up the database:
 php artisan migrate
-
+php artisan storage:link
 Usage
 Run the following command to start the development server:
 php artisan serve
