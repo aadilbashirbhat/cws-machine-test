@@ -66,6 +66,6 @@
     @isset($applicant)
     <img id="imagePreview" class="img-fluid mt-2" style="max-width: 100%" src="{{ Storage::url($applicant->photo_path) }}" alt="" height="250" width="250">
     @else
-    <img id="imagePreview" class="img-fluid mt-2" style="max-width: 100%" src="" alt="">
+    <img id="imagePreview" class="img-fluid mt-2" style="max-width: 50%" src="" alt="">
     @endisset
 </div>

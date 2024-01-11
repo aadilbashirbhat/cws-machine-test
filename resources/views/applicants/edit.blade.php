@@ -118,8 +118,9 @@
             },
             errorPlacement: function(error, element) {
                 error.insertAfter(element); // Display error messages below each input
-            },
+            }
         });
+
 
         // Custom method for age validation
         $.validator.addMethod('dobValidation', function(value, element) {
@@ -137,11 +138,19 @@
         $.validator.addMethod('validName', function(value, element) {
             return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
         }, 'Please enter a valid name without numbers or special characters.');
+
         $.validator.addMethod('filesize', function(value, element, param) {
-            // Calculate file size in bytes
-            var fileSize = element.files[0].size;
-            return this.optional(element) || (fileSize <= param);
+            // Check if a file is selected
+            if (element.files && element.files[0]) {
+                // Calculate file size in bytes
+                var fileSize = element.files[0].size;
+                return this.optional(element) || (fileSize <= param);
+            }
+            // No file selected, consider it as valid
+            return true;
         }, 'File size must be less than {0} bytes.');
+
+
         var cropper;
 
         // Initialize Cropper.js after selecting a photo

@@ -39,6 +39,7 @@
         font-size: 12px;
     }
 </style>
+<!-- Include Croppie CSS -->
 <link rel="stylesheet" href="https://unpkg.com/cropperjs/dist/cropper.min.css">
 @endpush
 
@@ -49,7 +50,7 @@
 <script src="https://unpkg.com/cropperjs/dist/cropper.min.js"></script>
 <script>
     $(document).ready(function() {
-        $('#email').focusout(function() {
+        function checkUniqueEmail() {
             var email = $('#email').val();
 
             // Added CSRF token to headers
@@ -59,6 +60,9 @@
                 }
             });
 
+            // Variable to track if email is unique
+            var isEmailUnique = false;
+
             // AJAX request to check if the email is unique
             $.ajax({
                 url: "{{ route('check.email.unique') }}",
@@ -66,20 +70,23 @@
                 data: {
                     email: email
                 },
+                async: false, // Make the AJAX request synchronous
                 success: function(response) {
-                    if (!response.unique) {
-                        // If email is not unique, display error message and prevent form submission
-                        $('#email-error').html('This email is already taken.');
-                        $('#applicantForm').submit(function(event) {
-                            event.preventDefault();
-                        });
+                    if (response.unique) {
+                        isEmailUnique = true;
+                        $('#email-error').html(''); // Clear the error message
                     } else {
-                        // If email is unique, clear the error message
-                        $('#email-error').html('');
-                        $('#applicantForm').unbind('submit').submit();
+                        isEmailUnique = false;
+                        $('#email-error').html('This email is already taken.');
                     }
                 }
             });
+
+            return isEmailUnique;
+        }
+
+        $('#email').focusout(function() {
+            checkUniqueEmail();
         });
         $('#applicantForm').validate({
             rules: {
@@ -150,6 +157,11 @@
             errorPlacement: function(error, element) {
                 error.insertAfter(element); // Display error messages below each input
             },
+            submitHandler: function(form) {
+                if (checkUniqueEmail()) {
+                    form.submit(); // Submit the form after validation
+                }
+            },
             // Custom AJAX validation for the email field
         });
 
@@ -170,10 +182,19 @@
             return this.optional(element) || /^[a-zA-Z\s]+$/.test(value);
         }, 'Please enter a valid name without numbers or special characters.');
         $.validator.addMethod('filesize', function(value, element, param) {
-            // Calculate file size in bytes
-            var fileSize = element.files[0].size;
-            return this.optional(element) || (fileSize <= param);
+            // Check if a file is selected
+            if (element.files && element.files[0]) {
+                // Calculate file size in bytes
+                var fileSize = element.files[0].size;
+                return this.optional(element) || (fileSize <= param);
+            }
+            // No file selected, consider it as valid
+            return true;
         }, 'File size must be less than {0} bytes.');
+
+        var cropper;
+
+        // Initialize Cropper.js after selecting a photo
         var cropper;
 
         // Initialize Cropper.js after selecting a photo
@@ -205,6 +226,7 @@
                 reader.readAsDataURL(input.files[0]);
             }
         });
+
     });
 </script>
 @endpush

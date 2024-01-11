@@ -4,12 +4,12 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="x-ua-compatible" content="ie=edge">
-    <meta name="description" content="Adventure, Tours, Travel">
+    <meta name="description" content="CWS, Adil Bashir">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>@yield('title', '') {{ __( '| CWS Machine Test') }} </title>
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <!-- Include your stylesheets here -->
+    <!-- Include stylesheets here -->
     @include('includes.styles')
     @stack('head') <!-- Allow additional styles to be pushed from views -->
 </head>
